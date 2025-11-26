@@ -246,6 +246,7 @@
               </div>
               <div class="col-2">
                 <q-btn
+                  type="button"
                   icon="settings"
                   color="secondary"
                   outline
