@@ -39,13 +39,13 @@
             <div class="text-caption text-grey-7 q-mb-xs">Répartition par spécialité</div>
             <div class="row q-gutter-xs">
               <q-chip
-                v-for="(count, specialite) in stats.bySpecialite"
-                :key="specialite"
-                color="primary"
+                v-for="(count, specialiteId) in stats.bySpecialite"
+                :key="specialiteId"
+                :style="{ backgroundColor: getSpecialiteColor(specialiteId) }"
                 text-color="white"
                 size="sm"
               >
-                {{ getSpecialiteLabel(specialite) }}: {{ count }}
+                {{ getSpecialiteLabel(specialiteId) }}: {{ count }}
               </q-chip>
             </div>
           </q-card-section>
@@ -137,18 +137,21 @@
           <!-- Slot personnalisé pour la spécialité -->
           <template v-slot:body-cell-specialite="props">
             <q-td :props="props">
-              <q-badge :color="getSpecialiteColor(props.row.specialite)" outline>
+              <q-badge
+                :style="{ backgroundColor: getSpecialiteColor(props.row.specialite) }"
+                text-color="white"
+              >
                 {{ getSpecialiteLabel(props.row.specialite) }}
               </q-badge>
             </q-td>
           </template>
 
           <!-- Slot personnalisé pour le statut -->
-          <template v-slot:body-cell-actif="props">
+          <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
               <q-badge
-                :color="props.row.actif ? 'positive' : 'negative'"
-                :label="props.row.actif ? 'Actif' : 'Inactif'"
+                :color="props.row.is_active ? 'positive' : 'negative'"
+                :label="props.row.is_active ? 'Actif' : 'Inactif'"
               />
             </q-td>
           </template>
@@ -182,7 +185,7 @@
       </q-card-section>
     </q-card>
 
-    <!-- Dialog de formulaire -->
+    <!-- Dialog de formulaire technicien -->
     <q-dialog v-model="showFormDialog" persistent>
       <q-card style="min-width: 700px">
         <q-card-section class="row items-center">
@@ -228,15 +231,31 @@
               :rules="[val => !!val || 'Le téléphone est requis']"
             />
 
-            <q-select
-              v-model="formData.specialite"
-              outlined
-              :options="specialiteOptions"
-              emit-value
-              map-options
-              label="Spécialité *"
-              :rules="[val => !!val || 'La spécialité est requise']"
-            />
+            <!-- Spécialité avec bouton de gestion -->
+            <div class="row q-col-gutter-sm">
+              <div class="col-10">
+                <q-select
+                  v-model="formData.specialite"
+                  outlined
+                  :options="specialiteOptions"
+                  emit-value
+                  map-options
+                  label="Spécialité *"
+                  :rules="[val => !!val || 'La spécialité est requise']"
+                />
+              </div>
+              <div class="col-2">
+                <q-btn
+                  icon="settings"
+                  color="secondary"
+                  outline
+                  style="height: 56px; width: 100%"
+                  @click="openSpecialitesDialog"
+                >
+                  <q-tooltip>Gérer les spécialités</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
 
             <q-input
               v-model="formData.date_embauche"
@@ -246,7 +265,7 @@
             />
 
             <q-toggle
-              v-model="formData.actif"
+              v-model="formData.is_active"
               label="Technicien actif"
               color="positive"
             />
@@ -268,7 +287,7 @@
       </q-card>
     </q-dialog>
 
-    <!-- Dialog de confirmation de suppression -->
+    <!-- Dialog de confirmation de suppression technicien -->
     <q-dialog v-model="showDeleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -288,12 +307,213 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <!-- Dialog de gestion des spécialités -->
+    <q-dialog v-model="showSpecialitesDialog" persistent>
+      <q-card style="min-width: 800px; max-width: 90vw">
+        <q-card-section class="row items-center bg-primary text-white">
+          <q-icon name="school" size="sm" class="q-mr-sm" />
+          <div class="text-h6">Gestion des Spécialités</div>
+          <q-space />
+          <q-btn
+            flat
+            dense
+            round
+            icon="add"
+            @click="openSpecialiteForm"
+            color="white"
+          >
+            <q-tooltip>Nouvelle spécialité</q-tooltip>
+          </q-btn>
+          <q-btn flat dense round icon="close" v-close-popup color="white" />
+        </q-card-section>
+
+        <q-card-section style="max-height: 60vh" class="scroll">
+          <q-table
+            :rows="specialites"
+            :columns="specialitesColumns"
+            row-key="id"
+            flat
+            :loading="loadingSpecialites"
+            hide-pagination
+            :rows-per-page-options="[0]"
+          >
+            <!-- Couleur -->
+            <template v-slot:body-cell-couleur="props">
+              <q-td :props="props">
+                <div
+                  :style="{
+                    backgroundColor: props.value,
+                    width: '40px',
+                    height: '20px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px'
+                  }"
+                ></div>
+              </q-td>
+            </template>
+
+            <!-- Techniciens count -->
+            <template v-slot:body-cell-technicians_count="props">
+              <q-td :props="props">
+                <q-badge color="primary">{{ props.value || 0 }}</q-badge>
+              </q-td>
+            </template>
+
+            <!-- Actions -->
+            <template v-slot:body-cell-actions="props">
+              <q-td :props="props">
+                <q-btn
+                  flat
+                  dense
+                  round
+                  icon="edit"
+                  color="primary"
+                  size="sm"
+                  @click="editSpecialite(props.row)"
+                >
+                  <q-tooltip>Modifier</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  dense
+                  round
+                  icon="delete"
+                  color="negative"
+                  size="sm"
+                  @click="confirmDeleteSpecialite(props.row)"
+                  :disable="props.row.technicians_count > 0"
+                >
+                  <q-tooltip>
+                    {{ props.row.technicians_count > 0 ? 'Impossible de supprimer (techniciens affectés)' : 'Supprimer' }}
+                  </q-tooltip>
+                </q-btn>
+              </q-td>
+            </template>
+          </q-table>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <!-- Dialog Formulaire Spécialité -->
+    <q-dialog v-model="showSpecialiteFormDialog" persistent>
+      <q-card style="min-width: 500px">
+        <q-card-section class="row items-center bg-secondary text-white">
+          <div class="text-h6">{{ isEditingSpecialite ? 'Modifier' : 'Nouvelle' }} Spécialité</div>
+          <q-space />
+          <q-btn flat dense round icon="close" v-close-popup />
+        </q-card-section>
+
+        <q-card-section>
+          <q-form @submit="saveSpecialite" class="q-gutter-md">
+            <q-input
+              v-model="specialiteFormData.code"
+              label="Code *"
+              outlined
+              dense
+              :rules="[val => !!val || 'Le code est requis']"
+              :disable="isEditingSpecialite"
+            />
+
+            <q-input
+              v-model="specialiteFormData.nom"
+              label="Nom *"
+              outlined
+              dense
+              :rules="[val => !!val || 'Le nom est requis']"
+            />
+
+            <q-input
+              v-model="specialiteFormData.description"
+              label="Description"
+              outlined
+              dense
+              type="textarea"
+              rows="2"
+            />
+
+            <q-input
+              v-model="specialiteFormData.couleur"
+              label="Couleur *"
+              outlined
+              dense
+              :rules="[val => !!val || 'La couleur est requise']"
+            >
+              <template v-slot:append>
+                <q-icon name="colorize" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-color v-model="specialiteFormData.couleur" />
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+
+            <q-input
+              v-model.number="specialiteFormData.ordre"
+              label="Ordre d'affichage *"
+              outlined
+              dense
+              type="number"
+              :rules="[val => val !== null && val !== '' || 'L\'ordre est requis']"
+            />
+
+            <q-toggle
+              v-model="specialiteFormData.is_active"
+              label="Active"
+              color="positive"
+            />
+
+            <div class="row justify-end q-gutter-sm q-mt-md">
+              <q-btn label="Annuler" flat color="grey-7" v-close-popup />
+              <q-btn
+                type="submit"
+                label="Enregistrer"
+                color="primary"
+                unelevated
+                :loading="submittingSpecialite"
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <!-- Dialog Confirmation Suppression Spécialité -->
+    <q-dialog v-model="showDeleteSpecialiteDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning" color="negative" text-color="white" />
+          <span class="q-ml-sm">Voulez-vous vraiment supprimer cette spécialité ?</span>
+        </q-card-section>
+
+        <q-card-section v-if="specialiteToDelete">
+          <div class="text-body2 text-grey-8">
+            <strong>{{ specialiteToDelete.nom }}</strong> ({{ specialiteToDelete.code }})
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn label="Annuler" flat color="grey-7" v-close-popup />
+          <q-btn
+            label="Supprimer"
+            color="negative"
+            unelevated
+            @click="deleteSpecialite"
+            :loading="deletingSpecialite"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useQuasar } from 'quasar'
 import { useDeploymentStore } from 'src/stores/deployment'
+import { apiService } from 'src/services/api'
+
+const $q = useQuasar()
 
 // ============================================
 // STORE
@@ -302,7 +522,7 @@ import { useDeploymentStore } from 'src/stores/deployment'
 const deploymentStore = useDeploymentStore()
 
 // ============================================
-// STATE
+// STATE - TECHNICIENS
 // ============================================
 
 const showFormDialog = ref(false)
@@ -314,7 +534,6 @@ const searchQuery = ref('')
 const filterSpecialite = ref(null)
 const filterStatus = ref(null)
 
-// État local pour les données (TOUJOURS initialisés)
 const technicians = ref([])
 const loading = ref(false)
 
@@ -323,9 +542,9 @@ const formData = ref({
   nom: '',
   prenoms: '',
   telephone: '',
-  specialite: '',
+  specialite: null,
   date_embauche: '',
-  actif: true
+  is_active: true
 })
 
 const pagination = ref({
@@ -337,12 +556,35 @@ const pagination = ref({
 })
 
 // ============================================
+// STATE - SPÉCIALITÉS
+// ============================================
+
+const specialites = ref([])
+const loadingSpecialites = ref(false)
+const showSpecialitesDialog = ref(false)
+const showSpecialiteFormDialog = ref(false)
+const showDeleteSpecialiteDialog = ref(false)
+const isEditingSpecialite = ref(false)
+const submittingSpecialite = ref(false)
+const deletingSpecialite = ref(false)
+const specialiteToDelete = ref(null)
+
+const specialiteFormData = ref({
+  code: '',
+  nom: '',
+  description: '',
+  couleur: '#000000',
+  ordre: 0,
+  is_active: true
+})
+
+// ============================================
 // COMPUTED
 // ============================================
 
 const stats = computed(() => {
   const total = technicians.value.length
-  const actifs = technicians.value.filter(t => t.actif).length
+  const actifs = technicians.value.filter(t => t.is_active).length
   const bySpecialite = {}
 
   technicians.value.forEach(t => {
@@ -355,14 +597,14 @@ const stats = computed(() => {
   return { total, actifs, bySpecialite }
 })
 
-const specialiteOptions = [
-  { label: 'Tireur de câble', value: 'tireur_cable' },
-  { label: 'Soudeur', value: 'soudeur' },
-  { label: 'Technicien FO', value: 'technicien_fo' },
-  { label: 'Monteur réseaux', value: 'monteur_reseaux' },
-  { label: 'Chef d\'équipe', value: 'chef_equipe' },
-  { label: 'Autre', value: 'autre' }
-]
+const specialiteOptions = computed(() => {
+  return specialites.value
+    .filter(s => s.is_active)
+    .map(s => ({
+      label: s.nom,
+      value: s.id
+    }))
+})
 
 const statusOptions = [
   { label: 'Tous', value: null },
@@ -400,9 +642,9 @@ const columns = [
     format: val => val ? new Date(val).toLocaleDateString('fr-FR') : '-'
   },
   {
-    name: 'actif',
+    name: 'is_active',
     label: 'Statut',
-    field: 'actif',
+    field: 'is_active',
     align: 'center',
     sortable: true
   },
@@ -414,42 +656,149 @@ const columns = [
   }
 ]
 
+const specialitesColumns = [
+  { name: 'code', label: 'Code', field: 'code', align: 'left', sortable: true },
+  { name: 'nom', label: 'Nom', field: 'nom', align: 'left', sortable: true },
+  { name: 'couleur', label: 'Couleur', field: 'couleur', align: 'center' },
+  { name: 'ordre', label: 'Ordre', field: 'ordre', align: 'center', sortable: true },
+  { name: 'technicians_count', label: 'Techniciens', field: 'technicians_count', align: 'center' },
+  { name: 'actions', label: 'Actions', field: 'actions', align: 'center' }
+]
+
 // ============================================
-// METHODS
+// METHODS - UTILS
 // ============================================
 
-function getSpecialiteLabel(value) {
-  const option = specialiteOptions.find(opt => opt.value === value)
-  return option ? option.label : value
+function getSpecialiteLabel(specialiteId) {
+  const specialite = specialites.value.find(s => s.id === specialiteId)
+  return specialite ? specialite.nom : 'Non défini'
 }
 
-function getSpecialiteColor(value) {
-  const colors = {
-    tireur_cable: 'blue',
-    soudeur: 'orange',
-    technicien_fo: 'green',
-    monteur_reseaux: 'purple',
-    chef_equipe: 'red',
-    autre: 'grey'
+function getSpecialiteColor(specialiteId) {
+  const specialite = specialites.value.find(s => s.id === specialiteId)
+  return specialite ? specialite.couleur : '#999999'
+}
+
+// ============================================
+// METHODS - SPÉCIALITÉS
+// ============================================
+
+async function loadSpecialites() {
+  loadingSpecialites.value = true
+  try {
+    const response = await apiService.deployment.specialites.list()
+    specialites.value = response.data
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors du chargement des spécialités',
+      caption: error.response?.data?.detail || error.message
+    })
+  } finally {
+    loadingSpecialites.value = false
   }
-  return colors[value] || 'grey'
 }
+
+function openSpecialitesDialog() {
+  showSpecialitesDialog.value = true
+  loadSpecialites()
+}
+
+function openSpecialiteForm() {
+  isEditingSpecialite.value = false
+  specialiteFormData.value = {
+    code: '',
+    nom: '',
+    description: '',
+    couleur: '#000000',
+    ordre: specialites.value.length,
+    is_active: true
+  }
+  showSpecialiteFormDialog.value = true
+}
+
+function editSpecialite(specialite) {
+  isEditingSpecialite.value = true
+  specialiteFormData.value = { ...specialite }
+  showSpecialiteFormDialog.value = true
+}
+
+async function saveSpecialite() {
+  submittingSpecialite.value = true
+  try {
+    if (isEditingSpecialite.value) {
+      await apiService.deployment.specialites.update(specialiteFormData.value.id, specialiteFormData.value)
+      $q.notify({
+        type: 'positive',
+        message: 'Spécialité modifiée avec succès'
+      })
+    } else {
+      await apiService.deployment.specialites.create(specialiteFormData.value)
+      $q.notify({
+        type: 'positive',
+        message: 'Spécialité créée avec succès'
+      })
+    }
+    showSpecialiteFormDialog.value = false
+    await loadSpecialites()
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors de l\'enregistrement',
+      caption: error.response?.data?.detail || error.message
+    })
+  } finally {
+    submittingSpecialite.value = false
+  }
+}
+
+function confirmDeleteSpecialite(specialite) {
+  specialiteToDelete.value = specialite
+  showDeleteSpecialiteDialog.value = true
+}
+
+async function deleteSpecialite() {
+  deletingSpecialite.value = true
+  try {
+    await apiService.deployment.specialites.delete(specialiteToDelete.value.id)
+    $q.notify({
+      type: 'positive',
+      message: 'Spécialité supprimée avec succès'
+    })
+    showDeleteSpecialiteDialog.value = false
+    await loadSpecialites()
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors de la suppression',
+      caption: error.response?.data?.detail || error.message
+    })
+  } finally {
+    deletingSpecialite.value = false
+  }
+}
+
+// ============================================
+// METHODS - TECHNICIENS
+// ============================================
 
 async function loadTechnicians(params = {}) {
   loading.value = true
   try {
     const result = await deploymentStore.technicians.list(params)
-
-    // Mettre à jour le ref local
     technicians.value = Array.isArray(result) ? result : []
 
-    // Mettre à jour la pagination
     if (deploymentStore.technicians?.pagination?.value?.rowsNumber !== undefined) {
       pagination.value.rowsNumber = deploymentStore.technicians.pagination.value.rowsNumber
     }
   } catch (error) {
     console.error('Erreur chargement techniciens:', error)
-    technicians.value = [] // Toujours un tableau vide en cas d'erreur
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors du chargement des techniciens',
+      caption: error.response?.data?.detail || error.message
+    })
+    technicians.value = []
   } finally {
     loading.value = false
   }
@@ -473,7 +822,7 @@ async function onTableRequest(props) {
   }
 
   if (filterStatus.value !== null) {
-    params.actif = filterStatus.value
+    params.is_active = filterStatus.value
   }
 
   await loadTechnicians(params)
@@ -484,7 +833,7 @@ function onSearch() {
   loadTechnicians({
     search: searchQuery.value,
     specialite: filterSpecialite.value,
-    actif: filterStatus.value
+    is_active: filterStatus.value
   })
 }
 
@@ -492,7 +841,7 @@ function onFilter() {
   loadTechnicians({
     search: searchQuery.value,
     specialite: filterSpecialite.value,
-    actif: filterStatus.value
+    is_active: filterStatus.value
   })
 }
 
@@ -516,9 +865,9 @@ function resetForm() {
     nom: '',
     prenoms: '',
     telephone: '',
-    specialite: '',
+    specialite: null,
     date_embauche: '',
-    actif: true
+    is_active: true
   }
 }
 
@@ -526,8 +875,16 @@ async function saveTechnician() {
   try {
     if (isEditing.value) {
       await deploymentStore.technicians.update(selectedTechnician.value.id, formData.value)
+      $q.notify({
+        type: 'positive',
+        message: 'Technicien modifié avec succès'
+      })
     } else {
       await deploymentStore.technicians.create(formData.value)
+      $q.notify({
+        type: 'positive',
+        message: 'Technicien créé avec succès'
+      })
     }
 
     showFormDialog.value = false
@@ -535,6 +892,11 @@ async function saveTechnician() {
     await loadTechnicians()
   } catch (error) {
     console.error('Erreur sauvegarde technicien:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors de l\'enregistrement',
+      caption: error.response?.data?.detail || error.message
+    })
   }
 }
 
@@ -546,11 +908,20 @@ function confirmDelete(technician) {
 async function deleteTechnician() {
   try {
     await deploymentStore.technicians.remove(selectedTechnician.value.id)
+    $q.notify({
+      type: 'positive',
+      message: 'Technicien supprimé avec succès'
+    })
     showDeleteDialog.value = false
     selectedTechnician.value = null
     await loadTechnicians()
   } catch (error) {
     console.error('Erreur suppression technicien:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Erreur lors de la suppression',
+      caption: error.response?.data?.detail || error.message
+    })
   }
 }
 
@@ -558,7 +929,14 @@ async function deleteTechnician() {
 // LIFECYCLE
 // ============================================
 
-onMounted(() => {
-  loadTechnicians()
+onMounted(async () => {
+  await loadSpecialites()
+  await loadTechnicians()
 })
 </script>
+
+<style scoped>
+.q-table th {
+  font-weight: 600;
+}
+</style>
