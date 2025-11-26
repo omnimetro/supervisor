@@ -1,0 +1,597 @@
+// ============================================
+// SUPERVISOR V2.0 - Animations
+// ============================================
+// Transitions, keyframes et animations selon les spécifications
+
+@use 'sass:color';
+@import './variables.scss';
+
+// ============================================
+// Classes de Transition Standards
+// ============================================
+
+// Transition Standard (200ms ease-out)
+.transition-standard {
+  transition: all $transition-standard $ease-out;
+}
+
+// Transition Accent (300ms spring)
+.transition-accent {
+  transition: all $transition-accent $ease-spring;
+}
+
+// Micro-interactions (150ms ease-in-out)
+.transition-micro {
+  transition: all $transition-micro $ease-in-out;
+}
+
+// Transition de page (350ms cubic-bezier)
+.transition-page {
+  transition: all $duration-page cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ============================================
+// Transitions Spécifiques par Propriété
+// ============================================
+
+.transition-colors {
+  transition: color $transition-standard $ease-out,
+              background-color $transition-standard $ease-out,
+              border-color $transition-standard $ease-out;
+}
+
+.transition-opacity {
+  transition: opacity $transition-standard $ease-out;
+}
+
+.transition-transform {
+  transition: transform $transition-accent $ease-spring;
+}
+
+.transition-shadow {
+  transition: box-shadow $transition-standard $ease-out;
+}
+
+// ============================================
+// Keyframes - Fade Animations
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// Keyframes - Slide Animations
+// ============================================
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+// ============================================
+// Keyframes - Scale Animations
+// ============================================
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// ============================================
+// Keyframes - Rotation Animations
+// ============================================
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// Keyframes - Bounce Animations
+// ============================================
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// ============================================
+// Keyframes - Shake Animation
+// ============================================
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-10px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(10px);
+  }
+}
+
+// ============================================
+// Keyframes - Shimmer (Loading)
+// ============================================
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+// ============================================
+// Classes d'Animation Prêtes à l'Emploi
+// ============================================
+
+// Fade animations
+.animate-fade-in {
+  animation: fadeIn $transition-standard $ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut $transition-standard $ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp $transition-accent $ease-emphasized;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown $transition-accent $ease-emphasized;
+}
+
+// Slide animations
+.animate-slide-in-left {
+  animation: slideInLeft $transition-accent $ease-emphasized;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight $transition-accent $ease-emphasized;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp $transition-accent $ease-emphasized;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown $transition-accent $ease-emphasized;
+}
+
+// Scale animations
+.animate-scale-in {
+  animation: scaleIn $transition-standard $ease-emphasized;
+}
+
+.animate-scale-out {
+  animation: scaleOut $transition-standard $ease-emphasized;
+}
+
+.animate-pulse {
+  animation: pulse 2s $ease-in-out infinite;
+}
+
+// Rotation animations
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-rotate {
+  animation: rotate $transition-accent $ease-standard;
+}
+
+// Bounce animations
+.animate-bounce {
+  animation: bounce 1s $ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounceIn $duration-slow $ease-emphasized;
+}
+
+// Shake animation
+.animate-shake {
+  animation: shake 0.5s $ease-standard;
+}
+
+// ============================================
+// États Interactifs (Hover, Focus, Active)
+// ============================================
+
+// Bouton Hover avec élévation
+.hover-elevate {
+  transition: transform $transition-micro $ease-out,
+              box-shadow $transition-micro $ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
+// Hover avec scale
+.hover-scale {
+  transition: transform $transition-micro $ease-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Hover avec glow
+.hover-glow {
+  transition: box-shadow $transition-standard $ease-out;
+
+  &:hover {
+    box-shadow: 0 0 20px rgba($primary, 0.3);
+  }
+}
+
+// Hover avec brighten
+.hover-brighten {
+  transition: filter $transition-standard $ease-out;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+// Focus visible (accessibilité)
+.focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color $transition-micro $ease-out;
+
+  &:focus-visible {
+    outline-color: $accent;
+  }
+}
+
+// ============================================
+// Classes de Délai (Animation Delay)
+// ============================================
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+// ============================================
+// Classes de Durée
+// ============================================
+
+.duration-fast { animation-duration: $duration-fast !important; }
+.duration-base { animation-duration: $duration-base !important; }
+.duration-medium { animation-duration: $duration-medium !important; }
+.duration-slow { animation-duration: $duration-slow !important; }
+
+// ============================================
+// Loading/Skeleton States
+// ============================================
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    $bg-light 0%,
+    color.adjust($bg-light, $lightness: 2%) 50%,
+    $bg-light 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: $border-radius-small;
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+  border-radius: $border-radius-small;
+}
+
+.skeleton-circle {
+  border-radius: $border-radius-round;
+}
+
+// ============================================
+// Ripple Effect (Material Design)
+// ============================================
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba($primary, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::after {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+// ============================================
+// Page Transitions (Vue Router)
+// ============================================
+
+// Fade transition
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $transition-standard $ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// Slide transition
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform $transition-accent $ease-emphasized;
+}
+
+.slide-enter-from {
+  transform: translateX(100%);
+}
+
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+
+// Scale transition
+.scale-enter-active,
+.scale-leave-active {
+  transition: transform $transition-standard $ease-emphasized,
+              opacity $transition-standard $ease-out;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+// ============================================
+// Utilities
+// ============================================
+
+// Désactiver les animations (pour accessibilité)
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Classe pour cacher avec transition
+.hide-with-transition {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity $transition-standard $ease-out,
+              transform $transition-standard $ease-out;
+  pointer-events: none;
+}
+
+.show-with-transition {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+// ============================================
+// Mixins pour Animations Personnalisées
+// ============================================
+
+// Mixin pour créer une transition personnalisée
+@mixin custom-transition($properties, $duration: $transition-standard, $easing: $ease-out) {
+  transition: $properties $duration $easing;
+}
+
+// Mixin pour animation avec keyframes
+@mixin animate($name, $duration: $transition-standard, $easing: $ease-out, $delay: 0s, $iteration: 1) {
+  animation: $name $duration $easing $delay $iteration;
+}

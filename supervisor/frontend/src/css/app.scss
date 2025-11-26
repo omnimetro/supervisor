@@ -1,0 +1,453 @@
+// ============================================
+// SUPERVISOR V2.0 - Styles Globaux
+// ============================================
+// Application web de gestion des opérations terrain pour AI Venture
+
+// ============================================
+// 1. Import des Variables et Tokens de Design
+// ============================================
+@use 'sass:color';
+@import './variables.scss';
+
+// ============================================
+// 2. Import de la Typographie
+// ============================================
+@import './typography.scss';
+
+// ============================================
+// 3. Import des Animations
+// ============================================
+@import './animations.scss';
+
+// ============================================
+// 4. Reset & Base Styles
+// ============================================
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-family-primary;
+  font-size: $font-size-body;
+  line-height: $line-height-normal;
+  color: $text-primary;
+  background-color: $bg-light;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+// ============================================
+// 5. Layout Utilities
+// ============================================
+
+.container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $space-base;
+}
+
+.page-container {
+  padding: $space-base;
+  min-height: calc(100vh - 64px); // 64px = hauteur du header
+}
+
+.section {
+  padding: $space-lg 0;
+}
+
+.section-large {
+  padding: $space-2xl 0;
+}
+
+// ============================================
+// 6. Spacing Utilities
+// ============================================
+
+// Margins
+.m-0 { margin: 0 !important; }
+.m-xs { margin: $space-xs !important; }
+.m-sm { margin: $space-sm !important; }
+.m-base { margin: $space-base !important; }
+.m-md { margin: $space-md !important; }
+.m-lg { margin: $space-lg !important; }
+.m-xl { margin: $space-xl !important; }
+
+// Margin Top
+.mt-0 { margin-top: 0 !important; }
+.mt-xs { margin-top: $space-xs !important; }
+.mt-sm { margin-top: $space-sm !important; }
+.mt-base { margin-top: $space-base !important; }
+.mt-md { margin-top: $space-md !important; }
+.mt-lg { margin-top: $space-lg !important; }
+.mt-xl { margin-top: $space-xl !important; }
+
+// Margin Bottom
+.mb-0 { margin-bottom: 0 !important; }
+.mb-xs { margin-bottom: $space-xs !important; }
+.mb-sm { margin-bottom: $space-sm !important; }
+.mb-base { margin-bottom: $space-base !important; }
+.mb-md { margin-bottom: $space-md !important; }
+.mb-lg { margin-bottom: $space-lg !important; }
+.mb-xl { margin-bottom: $space-xl !important; }
+
+// Margin Left
+.ml-0 { margin-left: 0 !important; }
+.ml-xs { margin-left: $space-xs !important; }
+.ml-sm { margin-left: $space-sm !important; }
+.ml-base { margin-left: $space-base !important; }
+.ml-md { margin-left: $space-md !important; }
+.ml-lg { margin-left: $space-lg !important; }
+
+// Margin Right
+.mr-0 { margin-right: 0 !important; }
+.mr-xs { margin-right: $space-xs !important; }
+.mr-sm { margin-right: $space-sm !important; }
+.mr-base { margin-right: $space-base !important; }
+.mr-md { margin-right: $space-md !important; }
+.mr-lg { margin-right: $space-lg !important; }
+
+// Margin X (horizontal)
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.mx-0 { margin-left: 0 !important; margin-right: 0 !important; }
+.mx-xs { margin-left: $space-xs !important; margin-right: $space-xs !important; }
+.mx-base { margin-left: $space-base !important; margin-right: $space-base !important; }
+
+// Margin Y (vertical)
+.my-0 { margin-top: 0 !important; margin-bottom: 0 !important; }
+.my-xs { margin-top: $space-xs !important; margin-bottom: $space-xs !important; }
+.my-base { margin-top: $space-base !important; margin-bottom: $space-base !important; }
+.my-md { margin-top: $space-md !important; margin-bottom: $space-md !important; }
+
+// Paddings
+.p-0 { padding: 0 !important; }
+.p-xs { padding: $space-xs !important; }
+.p-sm { padding: $space-sm !important; }
+.p-base { padding: $space-base !important; }
+.p-md { padding: $space-md !important; }
+.p-lg { padding: $space-lg !important; }
+.p-xl { padding: $space-xl !important; }
+
+// Padding Top
+.pt-0 { padding-top: 0 !important; }
+.pt-xs { padding-top: $space-xs !important; }
+.pt-base { padding-top: $space-base !important; }
+.pt-md { padding-top: $space-md !important; }
+.pt-lg { padding-top: $space-lg !important; }
+
+// Padding Bottom
+.pb-0 { padding-bottom: 0 !important; }
+.pb-xs { padding-bottom: $space-xs !important; }
+.pb-base { padding-bottom: $space-base !important; }
+.pb-md { padding-bottom: $space-md !important; }
+.pb-lg { padding-bottom: $space-lg !important; }
+
+// Padding X (horizontal)
+.px-0 { padding-left: 0 !important; padding-right: 0 !important; }
+.px-xs { padding-left: $space-xs !important; padding-right: $space-xs !important; }
+.px-base { padding-left: $space-base !important; padding-right: $space-base !important; }
+.px-md { padding-left: $space-md !important; padding-right: $space-md !important; }
+
+// Padding Y (vertical)
+.py-0 { padding-top: 0 !important; padding-bottom: 0 !important; }
+.py-xs { padding-top: $space-xs !important; padding-bottom: $space-xs !important; }
+.py-base { padding-top: $space-base !important; padding-bottom: $space-base !important; }
+.py-md { padding-top: $space-md !important; padding-bottom: $space-md !important; }
+
+// ============================================
+// 7. Card Component Styles
+// ============================================
+
+.card-container {
+  background: $bg-white;
+  border-radius: $border-radius-card;
+  box-shadow: $shadow-card;
+  padding: $card-padding;
+  transition: box-shadow $transition-standard $ease-out;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+.card-elevated {
+  box-shadow: $shadow-lg;
+}
+
+.card-flat {
+  box-shadow: none;
+  border: 1px solid $border-light;
+}
+
+// ============================================
+// 8. Button Enhancements
+// ============================================
+
+.btn {
+  height: $button-height;
+  padding: $button-padding-y $button-padding-x;
+  border-radius: $border-radius-button;
+  font-size: $font-size-button;
+  font-weight: $font-weight-medium;
+  transition: all $transition-standard $ease-out;
+  cursor: pointer;
+  user-select: none;
+
+  &:disabled {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background-color: $primary;
+  color: $text-white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($primary, $lightness: -5%);
+    box-shadow: $shadow-button;
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust($primary, $lightness: -10%);
+  }
+}
+
+.btn-secondary {
+  background-color: $secondary;
+  color: $text-white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($secondary, $lightness: -5%);
+  }
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: $primary;
+  border: 2px solid $primary;
+
+  &:hover:not(:disabled) {
+    background-color: rgba($primary, 0.08);
+  }
+}
+
+// ============================================
+// 9. Background Colors
+// ============================================
+
+.bg-white { background-color: $bg-white !important; }
+.bg-light { background-color: $bg-light !important; }
+.bg-dark { background-color: $bg-dark !important; }
+.bg-primary { background-color: $primary !important; }
+.bg-secondary { background-color: $secondary !important; }
+.bg-accent { background-color: $accent !important; }
+.bg-success { background-color: $success !important; }
+.bg-error { background-color: $error !important; }
+.bg-warning { background-color: $warning !important; }
+
+// ============================================
+// 10. Border Utilities
+// ============================================
+
+.border { border: 1px solid $border-light !important; }
+.border-0 { border: none !important; }
+.border-top { border-top: 1px solid $border-light !important; }
+.border-bottom { border-bottom: 1px solid $border-light !important; }
+.border-left { border-left: 1px solid $border-light !important; }
+.border-right { border-right: 1px solid $border-light !important; }
+
+.border-primary { border-color: $primary !important; }
+.border-accent { border-color: $accent !important; }
+
+.rounded { border-radius: $border-radius-button !important; }
+.rounded-sm { border-radius: $border-radius-small !important; }
+.rounded-lg { border-radius: $border-radius-card !important; }
+.rounded-full { border-radius: $border-radius-round !important; }
+.rounded-none { border-radius: 0 !important; }
+
+// ============================================
+// 11. Shadow Utilities
+// ============================================
+
+.shadow-none { box-shadow: $shadow-none !important; }
+.shadow-sm { box-shadow: $shadow-sm !important; }
+.shadow { box-shadow: $shadow-base !important; }
+.shadow-md { box-shadow: $shadow-md !important; }
+.shadow-lg { box-shadow: $shadow-lg !important; }
+.shadow-xl { box-shadow: $shadow-xl !important; }
+
+// ============================================
+// 12. Display Utilities
+// ============================================
+
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+
+// ============================================
+// 13. Flexbox Utilities
+// ============================================
+
+.flex-row { flex-direction: row !important; }
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-nowrap { flex-wrap: nowrap !important; }
+
+.justify-start { justify-content: flex-start !important; }
+.justify-center { justify-content: center !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-around { justify-content: space-around !important; }
+
+.align-start { align-items: flex-start !important; }
+.align-center { align-items: center !important; }
+.align-end { align-items: flex-end !important; }
+.align-stretch { align-items: stretch !important; }
+
+.flex-1 { flex: 1 !important; }
+.flex-auto { flex: auto !important; }
+.flex-none { flex: none !important; }
+
+// ============================================
+// 14. Position Utilities
+// ============================================
+
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.position-fixed { position: fixed !important; }
+.position-sticky { position: sticky !important; }
+
+// ============================================
+// 15. Width & Height Utilities
+// ============================================
+
+.w-full { width: 100% !important; }
+.w-auto { width: auto !important; }
+.h-full { height: 100% !important; }
+.h-auto { height: auto !important; }
+
+// ============================================
+// 16. Overflow Utilities
+// ============================================
+
+.overflow-auto { overflow: auto !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-visible { overflow: visible !important; }
+.overflow-scroll { overflow: scroll !important; }
+
+// ============================================
+// 17. Cursor Utilities
+// ============================================
+
+.cursor-pointer { cursor: pointer !important; }
+.cursor-default { cursor: default !important; }
+.cursor-not-allowed { cursor: not-allowed !important; }
+
+// ============================================
+// 18. Visibility Utilities
+// ============================================
+
+.visible { visibility: visible !important; }
+.invisible { visibility: hidden !important; }
+
+.opacity-0 { opacity: 0 !important; }
+.opacity-50 { opacity: 0.5 !important; }
+.opacity-100 { opacity: 1 !important; }
+
+// ============================================
+// 19. Custom Scrollbar
+// ============================================
+
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $bg-light;
+    border-radius: $border-radius-small;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-medium;
+    border-radius: $border-radius-small;
+
+    &:hover {
+      background: $border-dark;
+    }
+  }
+}
+
+// ============================================
+// 20. Mode Sombre (Dark Mode)
+// ============================================
+
+body.body--dark {
+  background-color: $dark-bg-primary;
+  color: $dark-text-primary;
+
+  .card-container {
+    background: $dark-bg-elevated;
+    border-color: $dark-border;
+  }
+
+  .bg-white {
+    background-color: $dark-bg-secondary !important;
+  }
+
+  .bg-light {
+    background-color: $dark-bg-elevated !important;
+  }
+
+  .border {
+    border-color: $dark-border !important;
+  }
+}
+
+// ============================================
+// 21. Responsive Utilities
+// ============================================
+
+@media (max-width: $breakpoint-sm) {
+  .page-container {
+    padding: $space-sm;
+  }
+
+  .container {
+    padding: 0 $space-sm;
+  }
+}
+
+// ============================================
+// 22. Print Styles
+// ============================================
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+}

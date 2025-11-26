@@ -1,0 +1,50 @@
+{
+  "app": {
+    "title": "SUPERVISOR V2.0",
+    "description": "Application web de gestion des opérations terrain pour AI Venture"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "loading": "Chargement...",
+    "no_data": "Aucune donnée disponible",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "menu": {
+    "home": "Accueil",
+    "deployment": "Chantiers",
+    "b2b": "B2B",
+    "inventory": "Stocks",
+    "expenses": "Dépenses",
+    "mapping": "Cartographie",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "remember_me": "Se souvenir de moi",
+    "forgot_password": "Mot de passe oublié ?",
+    "login_success": "Connexion réussie",
+    "login_error": "Erreur de connexion",
+    "logout_success": "Déconnexion réussie"
+  },
+  "errors": {
+    "network_error": "Erreur de connexion au serveur",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès interdit",
+    "not_found": "Ressource non trouvée",
+    "server_error": "Erreur serveur",
+    "unknown_error": "Erreur inconnue"
+  }
+}
