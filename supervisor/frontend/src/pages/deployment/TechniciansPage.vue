@@ -388,6 +388,9 @@ const stats = computed(() => {
 })
 
 const specialiteOptions = computed(() => {
+  if (!Array.isArray(specialites.value)) {
+    return []
+  }
   return specialites.value
     .filter(s => s.is_active)
     .map(s => ({
@@ -451,11 +454,17 @@ const columns = [
 // ============================================
 
 function getSpecialiteLabel(specialiteId) {
+  if (!Array.isArray(specialites.value)) {
+    return 'Non défini'
+  }
   const specialite = specialites.value.find(s => s.id === specialiteId)
   return specialite ? specialite.nom : 'Non défini'
 }
 
 function getSpecialiteColor(specialiteId) {
+  if (!Array.isArray(specialites.value)) {
+    return '#999999'
+  }
   const specialite = specialites.value.find(s => s.id === specialiteId)
   return specialite ? specialite.couleur : '#999999'
 }
@@ -468,8 +477,11 @@ async function loadSpecialites() {
   loadingSpecialites.value = true
   try {
     const response = await apiService.deployment.specialites.list()
-    specialites.value = response.data
+    // S'assurer que la réponse est bien un tableau
+    specialites.value = Array.isArray(response.data) ? response.data : []
   } catch (error) {
+    console.error('Erreur chargement spécialités:', error)
+    specialites.value = [] // Initialiser comme tableau vide en cas d'erreur
     $q.notify({
       type: 'negative',
       message: 'Erreur lors du chargement des spécialités',
