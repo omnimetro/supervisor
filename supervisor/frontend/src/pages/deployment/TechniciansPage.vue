@@ -477,8 +477,15 @@ async function loadSpecialites() {
   loadingSpecialites.value = true
   try {
     const response = await apiService.deployment.specialites.list()
-    // S'assurer que la réponse est bien un tableau
-    specialites.value = Array.isArray(response.data) ? response.data : []
+    // L'API retourne un objet paginé avec {count, next, previous, results}
+    // ou directement un tableau si pas de pagination
+    if (response.data.results) {
+      specialites.value = response.data.results
+    } else if (Array.isArray(response.data)) {
+      specialites.value = response.data
+    } else {
+      specialites.value = []
+    }
   } catch (error) {
     console.error('Erreur chargement spécialités:', error)
     specialites.value = [] // Initialiser comme tableau vide en cas d'erreur
