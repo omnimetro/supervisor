@@ -122,6 +122,18 @@ const routes = [
             }
           },
 
+          // Spécialités
+          {
+            path: 'specialites',
+            name: 'specialites',
+            component: () => import('pages/deployment/SpecialitesPage.vue'),
+            meta: {
+              title: 'Spécialités',
+              icon: 'school',
+              roles: ['SUPERADMIN', 'ADMIN']
+            }
+          },
+
           // Techniciens
           {
             path: 'technicians',

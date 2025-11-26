@@ -190,6 +190,19 @@ export const apiService = {
       active: () => api.get(`${API_ENDPOINTS.DEPLOYMENT.SUBCONTRACTORS}active/`)
     },
 
+    // --- Spécialités techniques ---
+    specialites: {
+      list: (params) => api.get(API_ENDPOINTS.DEPLOYMENT.SPECIALITES, { params: formatParams(params) }),
+      get: (id) => api.get(`${API_ENDPOINTS.DEPLOYMENT.SPECIALITES}${id}/`),
+      create: (data) => api.post(API_ENDPOINTS.DEPLOYMENT.SPECIALITES, data),
+      update: (id, data) => api.put(`${API_ENDPOINTS.DEPLOYMENT.SPECIALITES}${id}/`, data),
+      patch: (id, data) => api.patch(`${API_ENDPOINTS.DEPLOYMENT.SPECIALITES}${id}/`, data),
+      delete: (id) => api.delete(`${API_ENDPOINTS.DEPLOYMENT.SPECIALITES}${id}/`),
+
+      // Action personnalisée
+      active: () => api.get(`${API_ENDPOINTS.DEPLOYMENT.SPECIALITES}active/`)
+    },
+
     // --- Techniciens ---
     technicians: {
       list: (params) => api.get(API_ENDPOINTS.DEPLOYMENT.TECHNICIANS, { params: formatParams(params) }),

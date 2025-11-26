@@ -7,6 +7,7 @@ Ce fichier contient tous les ViewSets pour l'API REST :
 - BOQItemViewSet : Éléments du BOQ avec prix
 - TaskDefinitionViewSet : Définitions de tâches AIV
 - SubcontractorViewSet : Entreprises sous-traitantes
+- SpecialiteViewSet : Spécialités techniques
 - TechnicianViewSet : Techniciens AIV
 - ProjectViewSet : Chantiers de déploiement
 - ProjectPlanningViewSet : Planning prévisionnel travaux
@@ -25,7 +26,7 @@ from django.db.models import Count, Sum, Q
 
 from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
-    Subcontractor, Technician, Project, ProjectPlanning,
+    Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
     DeliveryPhase, Correction
 )
@@ -33,7 +34,8 @@ from .serializers import (
     OperatorSerializer, BOQCategorySerializer,
     BOQItemSerializer, BOQItemListSerializer,
     TaskDefinitionSerializer, SubcontractorSerializer,
-    TechnicianSerializer, ProjectSerializer, ProjectListSerializer,
+    SpecialiteSerializer, TechnicianSerializer,
+    ProjectSerializer, ProjectListSerializer,
     ProjectPlanningSerializer, TaskPlanningSerializer,
     DailyReportSerializer, CartographyPointSerializer,
     DeliveryPhaseSerializer, DeliveryPhaseListSerializer,
@@ -183,6 +185,37 @@ class SubcontractorViewSet(viewsets.ModelViewSet):
 # VIEWSETS RESSOURCES HUMAINES
 # ============================================
 
+class SpecialiteViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour la gestion des spécialités techniques.
+
+    Endpoints:
+    - GET /api/deployment/specialites/ : Liste des spécialités
+    - POST /api/deployment/specialites/ : Créer une spécialité
+    - GET /api/deployment/specialites/{id}/ : Détail d'une spécialité
+    - PUT /api/deployment/specialites/{id}/ : Modifier
+    - PATCH /api/deployment/specialites/{id}/ : Modification partielle
+    - DELETE /api/deployment/specialites/{id}/ : Supprimer
+    - GET /api/deployment/specialites/active/ : Spécialités actives
+    """
+
+    queryset = Specialite.objects.all()
+    serializer_class = SpecialiteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_active', 'code']
+    search_fields = ['code', 'nom', 'description']
+    ordering_fields = ['ordre', 'nom', 'code', 'created_at']
+    ordering = ['ordre', 'nom']
+
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        """Retourne uniquement les spécialités actives."""
+        active_specialites = self.queryset.filter(is_active=True)
+        serializer = self.get_serializer(active_specialites, many=True)
+        return Response(serializer.data)
+
+
 class TechnicianViewSet(viewsets.ModelViewSet):
     """
     ViewSet pour la gestion des techniciens AIV.
@@ -197,7 +230,7 @@ class TechnicianViewSet(viewsets.ModelViewSet):
     - GET /api/deployment/technicians/by-specialite/ : Par spécialité
     """
 
-    queryset = Technician.objects.all()
+    queryset = Technician.objects.select_related('specialite').all()
     serializer_class = TechnicianSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

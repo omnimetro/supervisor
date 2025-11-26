@@ -60,15 +60,6 @@ STATUT_TACHE_CHOICES = [
     ('suspendu', 'Suspendu'),
 ]
 
-SPECIALITE_CHOICES = [
-    ('gc', 'Génie Civil'),
-    ('reseau', 'Travaux de réseau'),
-    ('fo', 'Fibre Optique'),
-    ('soudure', 'Soudure FO'),
-    ('mesure', 'Mesures et tests'),
-    ('polyvalent', 'Polyvalent'),
-]
-
 NIVEAU_CHOICES = [
     ('junior', 'Junior'),
     ('confirme', 'Confirmé'),
@@ -437,6 +428,63 @@ class Subcontractor(models.Model):
 # MODÈLE RESSOURCES HUMAINES
 # ============================================
 
+class Specialite(models.Model):
+    """
+    Spécialité technique.
+
+    Spécialités des techniciens AIV (Génie Civil, Fibre Optique, etc.).
+    Permet une gestion dynamique des spécialités plutôt qu'une liste fixe.
+    """
+    code = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name="Code spécialité",
+        help_text="Code unique de la spécialité (ex: GC, FO, SOUD)"
+    )
+    nom = models.CharField(
+        max_length=100,
+        verbose_name="Nom de la spécialité"
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description"
+    )
+    couleur = models.CharField(
+        max_length=7,
+        default='#000000',
+        verbose_name="Couleur d'identification",
+        help_text="Code couleur hexadécimal (ex: #FF5733)"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Active"
+    )
+    ordre = models.IntegerField(
+        default=0,
+        verbose_name="Ordre d'affichage"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Date de modification"
+    )
+
+    class Meta:
+        verbose_name = "Spécialité"
+        verbose_name_plural = "Spécialités"
+        ordering = ['ordre', 'nom']
+
+    def __str__(self):
+        return self.nom
+
+    def get_technicians_count(self):
+        """Retourne le nombre de techniciens ayant cette spécialité."""
+        return self.technicians.filter(is_active=True).count()
+
+
 class Technician(models.Model):
     """
     Technicien AIV (sans compte utilisateur).
@@ -471,9 +519,10 @@ class Technician(models.Model):
         blank=True,
         verbose_name="Adresse"
     )
-    specialite = models.CharField(
-        max_length=50,
-        choices=SPECIALITE_CHOICES,
+    specialite = models.ForeignKey(
+        Specialite,
+        on_delete=models.PROTECT,
+        related_name='technicians',
         verbose_name="Spécialité"
     )
     niveau_competence = models.CharField(

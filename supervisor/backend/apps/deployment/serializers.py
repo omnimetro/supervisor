@@ -7,6 +7,7 @@ Ce fichier contient tous les serializers pour l'API REST :
 - BOQItemSerializer : Éléments du BOQ avec prix
 - TaskDefinitionSerializer : Définitions de tâches AIV
 - SubcontractorSerializer : Entreprises sous-traitantes
+- SpecialiteSerializer : Spécialités techniques
 - TechnicianSerializer : Techniciens AIV
 - ProjectSerializer : Chantiers de déploiement
 - ProjectPlanningSerializer : Planning prévisionnel travaux
@@ -20,7 +21,7 @@ Ce fichier contient tous les serializers pour l'API REST :
 from rest_framework import serializers
 from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
-    Subcontractor, Technician, Project, ProjectPlanning,
+    Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
     DeliveryPhase, Correction
 )
@@ -155,9 +156,30 @@ class SubcontractorSerializer(serializers.ModelSerializer):
 # SERIALIZERS RESSOURCES HUMAINES
 # ============================================
 
+class SpecialiteSerializer(serializers.ModelSerializer):
+    """Serializer pour le modèle Specialite."""
+
+    technicians_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Specialite
+        fields = [
+            'id', 'code', 'nom', 'description', 'couleur',
+            'is_active', 'ordre', 'technicians_count',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def get_technicians_count(self, obj):
+        """Retourne le nombre de techniciens."""
+        return obj.get_technicians_count()
+
+
 class TechnicianSerializer(serializers.ModelSerializer):
     """Serializer pour le modèle Technician."""
 
+    specialite_nom = serializers.CharField(source='specialite.nom', read_only=True)
+    specialite_couleur = serializers.CharField(source='specialite.couleur', read_only=True)
     full_name = serializers.SerializerMethodField(read_only=True)
     age = serializers.SerializerMethodField(read_only=True)
     anciennete = serializers.SerializerMethodField(read_only=True)
@@ -166,7 +188,8 @@ class TechnicianSerializer(serializers.ModelSerializer):
         model = Technician
         fields = [
             'id', 'matricule', 'nom', 'prenoms', 'full_name',
-            'telephone', 'email', 'adresse', 'specialite',
+            'telephone', 'email', 'adresse',
+            'specialite', 'specialite_nom', 'specialite_couleur',
             'niveau_competence', 'date_embauche', 'date_naissance',
             'numero_cni', 'est_chef_chantier', 'certifications',
             'equipements_attribues', 'is_active', 'notes', 'photo',

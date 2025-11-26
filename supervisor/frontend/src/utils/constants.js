@@ -45,6 +45,7 @@ export const API_ENDPOINTS = {
 
     // Ressources humaines
     SUBCONTRACTORS: '/deployment/subcontractors/',
+    SPECIALITES: '/deployment/specialites/',
     TECHNICIANS: '/deployment/technicians/',
 
     // Projets et plannings

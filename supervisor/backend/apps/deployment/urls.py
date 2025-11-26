@@ -9,6 +9,7 @@ Endpoints disponibles :
 - /api/deployment/boq-items/ : Articles du bordereau de quantités
 - /api/deployment/task-definitions/ : Définitions des types de tâches
 - /api/deployment/subcontractors/ : Gestion des sous-traitants
+- /api/deployment/specialites/ : Gestion des spécialités techniques
 - /api/deployment/technicians/ : Gestion des techniciens
 - /api/deployment/projects/ : Gestion des projets/chantiers
 - /api/deployment/project-plannings/ : Plannings des projets
@@ -28,6 +29,7 @@ from .views import (
     BOQItemViewSet,
     TaskDefinitionViewSet,
     SubcontractorViewSet,
+    SpecialiteViewSet,
     TechnicianViewSet,
     ProjectViewSet,
     ProjectPlanningViewSet,
@@ -54,6 +56,7 @@ router.register(r'task-definitions', TaskDefinitionViewSet, basename='taskdefini
 
 # Gestion des ressources humaines
 router.register(r'subcontractors', SubcontractorViewSet, basename='subcontractor')
+router.register(r'specialites', SpecialiteViewSet, basename='specialite')
 router.register(r'technicians', TechnicianViewSet, basename='technician')
 
 # Gestion des projets et plannings

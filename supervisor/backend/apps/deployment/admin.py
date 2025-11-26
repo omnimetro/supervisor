@@ -7,6 +7,7 @@ Ce fichier configure l'affichage des modèles dans l'admin Django :
 - BOQItemAdmin : Éléments du BOQ avec prix
 - TaskDefinitionAdmin : Définitions de tâches AIV
 - SubcontractorAdmin : Entreprises sous-traitantes
+- SpecialiteAdmin : Spécialités techniques
 - TechnicianAdmin : Techniciens AIV
 - ProjectAdmin : Chantiers de déploiement
 - ProjectPlanningAdmin : Planning prévisionnel travaux
@@ -22,7 +23,7 @@ from django.utils.html import format_html
 from django.db.models import Count, Sum
 from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
-    Subcontractor, Technician, Project, ProjectPlanning,
+    Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
     DeliveryPhase, Correction
 )
@@ -247,6 +248,44 @@ class SubcontractorAdmin(admin.ModelAdmin):
 # ============================================
 # RESSOURCES HUMAINES
 # ============================================
+
+@admin.register(Specialite)
+class SpecialiteAdmin(admin.ModelAdmin):
+    """Configuration admin pour le modèle Specialite."""
+
+    list_display = (
+        'code', 'nom', 'display_couleur', 'ordre',
+        'display_technicians_count', 'is_active', 'created_at'
+    )
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('code', 'nom', 'description')
+    ordering = ('ordre', 'nom')
+    readonly_fields = ('created_at', 'updated_at')
+
+    fieldsets = (
+        ('Informations principales', {
+            'fields': ('code', 'nom', 'description', 'couleur', 'ordre', 'is_active')
+        }),
+        ('Métadonnées', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def display_couleur(self, obj):
+        """Affiche la couleur d'identification."""
+        return format_html(
+            '<div style="width: 50px; height: 25px; background-color: {}; border: 1px solid #ccc;"></div>',
+            obj.couleur
+        )
+    display_couleur.short_description = 'Couleur'
+
+    def display_technicians_count(self, obj):
+        """Affiche le nombre de techniciens."""
+        count = obj.get_technicians_count()
+        return format_html('<strong>{}</strong>', count)
+    display_technicians_count.short_description = 'Techniciens'
+
 
 @admin.register(Technician)
 class TechnicianAdmin(admin.ModelAdmin):

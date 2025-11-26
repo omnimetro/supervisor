@@ -648,6 +648,7 @@ python manage.py migrate deployment
 **Base de données** :
   - ✅ Migrations users appliquées
   - ⏳ Migrations deployment à créer
+
 **État actuel** :
   - Backend sur http://localhost:8000 ✅
   - Frontend sur http://localhost:8080 ✅
