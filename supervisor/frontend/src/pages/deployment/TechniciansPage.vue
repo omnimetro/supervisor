@@ -511,10 +511,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 import { useDeploymentStore } from 'src/stores/deployment'
 import { apiService } from 'src/services/api'
 
 const $q = useQuasar()
+const router = useRouter()
 
 // ============================================
 // STORE
@@ -701,8 +703,8 @@ async function loadSpecialites() {
 }
 
 function openSpecialitesDialog() {
-  showSpecialitesDialog.value = true
-  loadSpecialites()
+  // Naviguer vers la page de gestion des spécialités
+  router.push({ name: 'specialites' })
 }
 
 function openSpecialiteForm() {
