@@ -155,6 +155,16 @@
         <q-card-section style="max-height: 70vh" class="scroll">
           <q-form @submit="saveSubcontractor" class="q-gutter-md">
             <div class="row q-col-gutter-md">
+              <div class="col-4">
+                <q-input
+                  v-model="formData.code"
+                  label="Code *"
+                  outlined
+                  maxlength="20"
+                  :rules="[val => !!val || 'Le code est requis']"
+                  hint="Ex: ST001"
+                />
+              </div>
               <div class="col-8">
                 <q-input
                   v-model="formData.nom"
@@ -163,45 +173,25 @@
                   :rules="[val => !!val || 'Le nom est requis']"
                 />
               </div>
-              <div class="col-4">
-                <q-input
-                  v-model="formData.sigle"
-                  label="Sigle *"
-                  outlined
-                  maxlength="20"
-                  :rules="[val => !!val || 'Le sigle est requis']"
-                />
-              </div>
             </div>
 
             <div class="row q-col-gutter-md">
               <div class="col-6">
                 <q-input
                   v-model="formData.telephone"
-                  label="Téléphone *"
+                  label="Téléphone"
                   outlined
-                  :rules="[val => !!val || 'Le téléphone est requis']"
                 />
               </div>
               <div class="col-6">
                 <q-input
                   v-model="formData.email"
-                  label="Email *"
+                  label="Email"
                   type="email"
                   outlined
-                  :rules="[
-                    val => !!val || 'L\'email est requis',
-                    val => /.+@.+\..+/.test(val) || 'Email invalide'
-                  ]"
                 />
               </div>
             </div>
-
-            <q-input
-              v-model="formData.numero_cc"
-              label="Numéro de Compte Contribuable (CC)"
-              outlined
-            />
 
             <q-input
               v-model="formData.adresse"
@@ -211,17 +201,60 @@
               rows="2"
             />
 
+            <div class="row q-col-gutter-md">
+              <div class="col-6">
+                <q-input
+                  v-model="formData.contact_principal_nom"
+                  label="Nom du contact principal"
+                  outlined
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                  v-model="formData.contact_principal_telephone"
+                  label="Téléphone du contact"
+                  outlined
+                />
+              </div>
+            </div>
+
             <q-input
-              v-model="formData.domaines_competence"
-              label="Domaines de compétence"
+              v-model="formData.specialites"
+              label="Spécialités"
               type="textarea"
               outlined
               rows="3"
               hint="Ex: Génie civil, Tirage de câbles, Soudure, etc."
             />
 
+            <div class="row q-col-gutter-md">
+              <div class="col-6">
+                <q-input
+                  v-model="formData.numero_registre_commerce"
+                  label="Numéro de Registre de Commerce"
+                  outlined
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                  v-model="formData.date_debut_collaboration"
+                  label="Date de début de collaboration"
+                  type="date"
+                  outlined
+                />
+              </div>
+            </div>
+
+            <q-input
+              v-model="formData.notes"
+              label="Notes"
+              type="textarea"
+              outlined
+              rows="2"
+            />
+
             <q-toggle
-              v-model="formData.actif"
+              v-model="formData.is_active"
               label="Sous-traitant actif"
               color="positive"
             />
@@ -351,14 +384,18 @@ const searchQuery = ref('')
 const filterStatus = ref(null)
 
 const formData = ref({
+  code: '',
   nom: '',
-  sigle: '',
+  adresse: '',
   telephone: '',
   email: '',
-  numero_cc: '',
-  adresse: '',
-  domaines_competence: '',
-  actif: true
+  contact_principal_nom: '',
+  contact_principal_telephone: '',
+  specialites: '',
+  numero_registre_commerce: '',
+  is_active: true,
+  date_debut_collaboration: '',
+  notes: ''
 })
 
 const pagination = ref({
@@ -504,14 +541,18 @@ function resetForm() {
   isEditing.value = false
   selectedSubcontractor.value = null
   formData.value = {
+    code: '',
     nom: '',
-    sigle: '',
+    adresse: '',
     telephone: '',
     email: '',
-    numero_cc: '',
-    adresse: '',
-    domaines_competence: '',
-    actif: true
+    contact_principal_nom: '',
+    contact_principal_telephone: '',
+    specialites: '',
+    numero_registre_commerce: '',
+    is_active: true,
+    date_debut_collaboration: '',
+    notes: ''
   }
 }
 
