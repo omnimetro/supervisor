@@ -282,13 +282,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Project.objects.select_related(
-        'operator', 'coordonnateur', 'superviseur_aiv'
+        'operator', 'superviseur_aiv'
     ).all()
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [
         'operator', 'type_projet', 'statut', 'zone_geographique',
-        'superviseur_aiv', 'coordonnateur'
+        'superviseur_aiv'
     ]
     search_fields = ['code', 'nom', 'zone_geographique', 'description']
     ordering_fields = ['code', 'nom', 'date_debut', 'date_fin_prevue', 'created_at']

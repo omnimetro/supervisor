@@ -412,7 +412,7 @@ class ProjectAdmin(admin.ModelAdmin):
         }),
         ('Équipe de gestion', {
             'fields': (
-                'coordonnateur', 'superviseur_aiv', 'superviseur_operateur'
+                'superviseur_aiv', 'superviseur_operateur'
             )
         }),
         ('État d\'avancement', {

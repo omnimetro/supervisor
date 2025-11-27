@@ -252,7 +252,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     """Serializer détaillé pour le modèle Project."""
 
     operator_nom = serializers.CharField(source='operator.nom', read_only=True)
-    coordonnateur_nom = serializers.SerializerMethodField(read_only=True)
     superviseur_aiv_nom = serializers.SerializerMethodField(read_only=True)
     progression_percentage = serializers.SerializerMethodField(read_only=True)
     total_tasks = serializers.SerializerMethodField(read_only=True)
@@ -265,7 +264,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             'id', 'code', 'nom', 'operator', 'operator_nom',
             'type_projet', 'zone_geographique', 'date_debut',
             'date_fin_prevue', 'date_fin_reelle', 'statut', 'budget',
-            'coordonnateur', 'coordonnateur_nom',
             'superviseur_aiv', 'superviseur_aiv_nom',
             'superviseur_operateur', 'travaux_ok', 'environnement_ok',
             'vt_ok', 'pv_ok', 'date_livraison', 'description',
@@ -275,12 +273,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
-
-    def get_coordonnateur_nom(self, obj):
-        """Retourne le nom du coordonnateur."""
-        if obj.coordonnateur:
-            return obj.coordonnateur.get_full_name()
-        return None
 
     def get_superviseur_aiv_nom(self, obj):
         """Retourne le nom du superviseur AIV."""

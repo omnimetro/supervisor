@@ -523,7 +523,9 @@ class Technician(models.Model):
         Specialite,
         on_delete=models.PROTECT,
         related_name='technicians',
-        verbose_name="Spécialité"
+        verbose_name="Spécialité",
+        null=True,
+        blank=True
     )
     niveau_competence = models.CharField(
         max_length=20,
@@ -672,14 +674,6 @@ class Project(models.Model):
         blank=True,
         validators=[MinValueValidator(Decimal('0.00'))],
         verbose_name="Budget"
-    )
-    coordonnateur = models.ForeignKey(
-        'users.Profile',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='coordinated_projects',
-        verbose_name="Coordonnateur"
     )
     superviseur_aiv = models.ForeignKey(
         'users.Profile',
