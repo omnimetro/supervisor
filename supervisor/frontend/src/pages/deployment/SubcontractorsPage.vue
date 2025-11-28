@@ -84,20 +84,20 @@
           </template>
 
           <!-- Slot personnalisé pour le statut -->
-          <template v-slot:body-cell-actif="props">
+          <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
               <q-badge
-                :color="props.row.actif ? 'positive' : 'negative'"
-                :label="props.row.actif ? 'Actif' : 'Inactif'"
+                :color="props.row.is_active ? 'positive' : 'negative'"
+                :label="props.row.is_active ? 'Actif' : 'Inactif'"
               />
             </q-td>
           </template>
 
-          <!-- Slot personnalisé pour les domaines de compétence -->
-          <template v-slot:body-cell-domaines_competence="props">
+          <!-- Slot personnalisé pour les spécialités -->
+          <template v-slot:body-cell-specialites="props">
             <q-td :props="props">
               <div class="text-caption" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                {{ props.row.domaines_competence || '-' }}
+                {{ props.row.specialites || '-' }}
               </div>
             </q-td>
           </template>
@@ -289,41 +289,61 @@
 
         <q-card-section v-if="selectedSubcontractor">
           <div class="q-gutter-md">
-            <div>
-              <div class="text-caption text-grey-7">Nom</div>
-              <div class="text-body1">{{ selectedSubcontractor.nom }}</div>
-            </div>
-            <div>
-              <div class="text-caption text-grey-7">Sigle</div>
-              <div class="text-body1">{{ selectedSubcontractor.sigle }}</div>
+            <div class="row q-col-gutter-md">
+              <div class="col-4">
+                <div class="text-caption text-grey-7">Code</div>
+                <div class="text-body1">{{ selectedSubcontractor.code }}</div>
+              </div>
+              <div class="col-8">
+                <div class="text-caption text-grey-7">Nom</div>
+                <div class="text-body1">{{ selectedSubcontractor.nom }}</div>
+              </div>
             </div>
             <div class="row q-col-gutter-md">
               <div class="col-6">
                 <div class="text-caption text-grey-7">Téléphone</div>
-                <div class="text-body1">{{ selectedSubcontractor.telephone }}</div>
+                <div class="text-body1">{{ selectedSubcontractor.telephone || '-' }}</div>
               </div>
               <div class="col-6">
                 <div class="text-caption text-grey-7">Email</div>
-                <div class="text-body1">{{ selectedSubcontractor.email }}</div>
+                <div class="text-body1">{{ selectedSubcontractor.email || '-' }}</div>
               </div>
-            </div>
-            <div v-if="selectedSubcontractor.numero_cc">
-              <div class="text-caption text-grey-7">Numéro CC</div>
-              <div class="text-body1">{{ selectedSubcontractor.numero_cc }}</div>
             </div>
             <div v-if="selectedSubcontractor.adresse">
               <div class="text-caption text-grey-7">Adresse</div>
               <div class="text-body1">{{ selectedSubcontractor.adresse }}</div>
             </div>
-            <div v-if="selectedSubcontractor.domaines_competence">
-              <div class="text-caption text-grey-7">Domaines de compétence</div>
-              <div class="text-body1">{{ selectedSubcontractor.domaines_competence }}</div>
+            <div class="row q-col-gutter-md" v-if="selectedSubcontractor.contact_principal_nom || selectedSubcontractor.contact_principal_telephone">
+              <div class="col-6">
+                <div class="text-caption text-grey-7">Contact principal</div>
+                <div class="text-body1">{{ selectedSubcontractor.contact_principal_nom || '-' }}</div>
+              </div>
+              <div class="col-6">
+                <div class="text-caption text-grey-7">Téléphone contact</div>
+                <div class="text-body1">{{ selectedSubcontractor.contact_principal_telephone || '-' }}</div>
+              </div>
+            </div>
+            <div v-if="selectedSubcontractor.specialites">
+              <div class="text-caption text-grey-7">Spécialités</div>
+              <div class="text-body1">{{ selectedSubcontractor.specialites }}</div>
+            </div>
+            <div v-if="selectedSubcontractor.numero_registre_commerce">
+              <div class="text-caption text-grey-7">Numéro de Registre de Commerce</div>
+              <div class="text-body1">{{ selectedSubcontractor.numero_registre_commerce }}</div>
+            </div>
+            <div v-if="selectedSubcontractor.date_debut_collaboration">
+              <div class="text-caption text-grey-7">Date de début de collaboration</div>
+              <div class="text-body1">{{ new Date(selectedSubcontractor.date_debut_collaboration).toLocaleDateString('fr-FR') }}</div>
+            </div>
+            <div v-if="selectedSubcontractor.notes">
+              <div class="text-caption text-grey-7">Notes</div>
+              <div class="text-body1">{{ selectedSubcontractor.notes }}</div>
             </div>
             <div>
               <div class="text-caption text-grey-7">Statut</div>
               <q-badge
-                :color="selectedSubcontractor.actif ? 'positive' : 'negative'"
-                :label="selectedSubcontractor.actif ? 'Actif' : 'Inactif'"
+                :color="selectedSubcontractor.is_active ? 'positive' : 'negative'"
+                :label="selectedSubcontractor.is_active ? 'Actif' : 'Inactif'"
               />
             </div>
           </div>
@@ -441,15 +461,15 @@ const columns = [
     align: 'left'
   },
   {
-    name: 'domaines_competence',
-    label: 'Domaines',
-    field: 'domaines_competence',
+    name: 'specialites',
+    label: 'Spécialités',
+    field: 'specialites',
     align: 'left'
   },
   {
-    name: 'actif',
+    name: 'is_active',
     label: 'Statut',
-    field: 'actif',
+    field: 'is_active',
     align: 'center',
     sortable: true
   },
