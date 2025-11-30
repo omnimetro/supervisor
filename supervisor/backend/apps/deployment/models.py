@@ -783,6 +783,125 @@ class Project(models.Model):
         return today > self.date_fin_prevue
 
 
+class TypeDocument(models.Model):
+    """
+    Type de document pour les projets.
+
+    Types de documents pouvant être associés aux projets
+    (BOM, MAP, SYNOPTIQUE, AUTRES).
+    """
+    code = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name="Code du type",
+        help_text="Code unique (ex: BOM, MAP, SYNOPTIQUE, AUTRES)"
+    )
+    nom = models.CharField(
+        max_length=100,
+        verbose_name="Nom du type de document"
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Actif"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Date de modification"
+    )
+
+    class Meta:
+        verbose_name = "Type de document"
+        verbose_name_plural = "Types de documents"
+        ordering = ['code']
+
+    def __str__(self):
+        return self.nom
+
+
+class ProjectDocument(models.Model):
+    """
+    Document associé à un projet.
+
+    Documents uploadés pour un projet (BOM, MAP, SYNOPTIQUE, etc.).
+    """
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='documents',
+        verbose_name="Projet"
+    )
+    type_document = models.ForeignKey(
+        TypeDocument,
+        on_delete=models.PROTECT,
+        related_name='documents',
+        verbose_name="Type de document"
+    )
+    nom = models.CharField(
+        max_length=200,
+        verbose_name="Nom du document"
+    )
+    fichier = models.FileField(
+        upload_to='projects/documents/%Y/%m/',
+        verbose_name="Fichier"
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name="Description"
+    )
+    version = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="Version",
+        help_text="Version du document (ex: v1.0, v2.1)"
+    )
+    date_upload = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date d'upload"
+    )
+    uploaded_by = models.ForeignKey(
+        'users.Profile',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='uploaded_documents',
+        verbose_name="Uploadé par"
+    )
+    taille_fichier = models.BigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Taille du fichier (octets)"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Date de modification"
+    )
+
+    class Meta:
+        verbose_name = "Document de projet"
+        verbose_name_plural = "Documents de projets"
+        ordering = ['-date_upload']
+
+    def __str__(self):
+        return f"{self.nom} - {self.project.code}"
+
+    def save(self, *args, **kwargs):
+        """Sauvegarde la taille du fichier automatiquement."""
+        if self.fichier:
+            self.taille_fichier = self.fichier.size
+        super().save(*args, **kwargs)
+
+
 class ProjectPlanning(models.Model):
     """
     Planning prévisionnel des travaux.

@@ -342,6 +342,56 @@ export const apiService = {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
       }
+    },
+
+    // ============================================
+    // GESTION DOCUMENTAIRE
+    // ============================================
+
+    // --- Types de Documents ---
+    typeDocuments: {
+      list: (params) => api.get(API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS, { params: formatParams(params) }),
+      get: (id) => api.get(`${API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS}${id}/`),
+      create: (data) => api.post(API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS, data),
+      update: (id, data) => api.put(`${API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS}${id}/`, data),
+      patch: (id, data) => api.patch(`${API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS}${id}/`, data),
+      delete: (id) => api.delete(`${API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS}${id}/`),
+
+      // Action personnalisée
+      active: () => api.get(`${API_ENDPOINTS.DEPLOYMENT.TYPE_DOCUMENTS}active/`)
+    },
+
+    // --- Documents de Projet ---
+    projectDocuments: {
+      list: (params) => api.get(API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS, { params: formatParams(params) }),
+      get: (id) => api.get(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}${id}/`),
+      create: (data) => {
+        const formData = createFormData(data)
+        return api.post(API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      },
+      update: (id, data) => {
+        const formData = createFormData(data)
+        return api.put(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}${id}/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      },
+      patch: (id, data) => {
+        const formData = createFormData(data)
+        return api.patch(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}${id}/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      },
+      delete: (id) => api.delete(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}${id}/`),
+
+      // Actions personnalisées
+      byProject: (projectId) => api.get(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}by_project/`, {
+        params: { project_id: projectId }
+      }),
+      byType: (typeId) => api.get(`${API_ENDPOINTS.DEPLOYMENT.PROJECT_DOCUMENTS}by_type/`, {
+        params: { type_id: typeId }
+      })
     }
   },
 

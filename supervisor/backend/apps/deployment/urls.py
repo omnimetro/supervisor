@@ -18,6 +18,8 @@ Endpoints disponibles :
 - /api/deployment/cartography-points/ : Points de cartographie
 - /api/deployment/delivery-phases/ : Phases de livraison
 - /api/deployment/corrections/ : Corrections demandées
+- /api/deployment/type-documents/ : Types de documents
+- /api/deployment/project-documents/ : Documents de projet
 """
 
 from django.urls import path, include
@@ -38,6 +40,8 @@ from .views import (
     CartographyPointViewSet,
     DeliveryPhaseViewSet,
     CorrectionViewSet,
+    TypeDocumentViewSet,
+    ProjectDocumentViewSet,
 )
 
 
@@ -71,6 +75,10 @@ router.register(r'cartography-points', CartographyPointViewSet, basename='cartog
 # Livraison et corrections
 router.register(r'delivery-phases', DeliveryPhaseViewSet, basename='deliveryphase')
 router.register(r'corrections', CorrectionViewSet, basename='correction')
+
+# Gestion documentaire
+router.register(r'type-documents', TypeDocumentViewSet, basename='typedocument')
+router.register(r'project-documents', ProjectDocumentViewSet, basename='projectdocument')
 
 app_name = 'deployment'
 

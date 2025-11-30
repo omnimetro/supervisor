@@ -187,6 +187,29 @@ const routes = [
               title: 'Définitions de tâches',
               icon: 'assignment'
             }
+          },
+
+          // Types de Documents
+          {
+            path: 'type-documents',
+            name: 'type-documents',
+            component: () => import('pages/deployment/TypeDocumentsPage.vue'),
+            meta: {
+              title: 'Types de Documents',
+              icon: 'description',
+              roles: ['SUPERADMIN', 'ADMIN']
+            }
+          },
+
+          // Documents de Projet
+          {
+            path: 'project-documents',
+            name: 'project-documents',
+            component: () => import('pages/deployment/ProjectDocumentsPage.vue'),
+            meta: {
+              title: 'Documents de Projet',
+              icon: 'folder'
+            }
           }
 
           // Routes futures (à créer)

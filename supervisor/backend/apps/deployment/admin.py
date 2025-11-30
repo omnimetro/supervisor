@@ -16,6 +16,8 @@ Ce fichier configure l'affichage des modèles dans l'admin Django :
 - CartographyPointAdmin : Points cartographiques
 - DeliveryPhaseAdmin : Phases de livraison
 - CorrectionAdmin : Corrections
+- TypeDocumentAdmin : Types de documents
+- ProjectDocumentAdmin : Documents de projet
 """
 
 from django.contrib import admin
@@ -25,7 +27,7 @@ from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
     Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
-    DeliveryPhase, Correction
+    DeliveryPhase, Correction, TypeDocument, ProjectDocument
 )
 
 
@@ -944,3 +946,103 @@ class CorrectionAdmin(admin.ModelAdmin):
             return format_html('<strong>{}</strong> photo(s)', count)
         return '0 photo(s)'
     display_photos_count.short_description = 'Photos'
+
+
+# ============================================
+# GESTION DOCUMENTAIRE
+# ============================================
+
+@admin.register(TypeDocument)
+class TypeDocumentAdmin(admin.ModelAdmin):
+    """Configuration admin pour le modèle TypeDocument."""
+
+    list_display = (
+        'code', 'nom', 'is_active',
+        'display_documents_count', 'created_at'
+    )
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('code', 'nom', 'description')
+    ordering = ('code',)
+    readonly_fields = ('created_at', 'updated_at')
+
+    fieldsets = (
+        ('Informations principales', {
+            'fields': ('code', 'nom', 'description', 'is_active')
+        }),
+        ('Métadonnées', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def display_documents_count(self, obj):
+        """Affiche le nombre de documents associés."""
+        count = obj.documents.count()
+        return format_html('<strong>{}</strong>', count)
+    display_documents_count.short_description = 'Documents'
+
+
+@admin.register(ProjectDocument)
+class ProjectDocumentAdmin(admin.ModelAdmin):
+    """Configuration admin pour le modèle ProjectDocument."""
+
+    list_display = (
+        'nom', 'display_project', 'display_type', 'version',
+        'display_taille', 'display_uploaded_by', 'date_upload'
+    )
+    list_filter = ('type_document', 'date_upload', 'project')
+    search_fields = (
+        'nom', 'description', 'version',
+        'project__code', 'project__nom',
+        'type_document__code', 'type_document__nom'
+    )
+    ordering = ('-date_upload',)
+    readonly_fields = ('date_upload', 'taille_fichier', 'created_at', 'updated_at')
+
+    fieldsets = (
+        ('Informations principales', {
+            'fields': ('nom', 'project', 'type_document')
+        }),
+        ('Fichier', {
+            'fields': ('fichier', 'taille_fichier', 'version')
+        }),
+        ('Détails', {
+            'fields': ('description', 'uploaded_by')
+        }),
+        ('Métadonnées', {
+            'fields': ('date_upload', 'created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def display_project(self, obj):
+        """Affiche le projet."""
+        return f"{obj.project.code} - {obj.project.nom}"
+    display_project.short_description = 'Projet'
+
+    def display_type(self, obj):
+        """Affiche le type de document."""
+        return obj.type_document.nom
+    display_type.short_description = 'Type'
+
+    def display_taille(self, obj):
+        """Affiche la taille du fichier formatée."""
+        if obj.taille_fichier:
+            size = obj.taille_fichier
+            if size < 1024:
+                return f"{size} B"
+            elif size < 1024 * 1024:
+                return f"{size / 1024:.1f} KB"
+            elif size < 1024 * 1024 * 1024:
+                return f"{size / (1024 * 1024):.1f} MB"
+            else:
+                return f"{size / (1024 * 1024 * 1024):.1f} GB"
+        return '-'
+    display_taille.short_description = 'Taille'
+
+    def display_uploaded_by(self, obj):
+        """Affiche l'utilisateur qui a uploadé."""
+        if obj.uploaded_by:
+            return obj.uploaded_by.get_full_name()
+        return '-'
+    display_uploaded_by.short_description = 'Uploadé par'

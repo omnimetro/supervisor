@@ -16,6 +16,8 @@ Ce fichier contient tous les serializers pour l'API REST :
 - CartographyPointSerializer : Points cartographiques
 - DeliveryPhaseSerializer : Phases de livraison
 - CorrectionSerializer : Corrections
+- TypeDocumentSerializer : Types de documents
+- ProjectDocumentSerializer : Documents de projet
 """
 
 from rest_framework import serializers
@@ -23,7 +25,7 @@ from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
     Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
-    DeliveryPhase, Correction
+    DeliveryPhase, Correction, TypeDocument, ProjectDocument
 )
 
 
@@ -549,3 +551,107 @@ class DeliveryPhaseListSerializer(serializers.ModelSerializer):
     def get_corrections_count(self, obj):
         """Retourne le nombre de corrections."""
         return obj.corrections.count()
+
+
+# ============================================
+# SERIALIZERS GESTION DOCUMENTAIRE
+# ============================================
+
+class TypeDocumentSerializer(serializers.ModelSerializer):
+    """Serializer pour le modèle TypeDocument."""
+
+    documents_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = TypeDocument
+        fields = [
+            'id', 'code', 'nom', 'description', 'is_active',
+            'documents_count', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def get_documents_count(self, obj):
+        """Retourne le nombre de documents associés."""
+        return obj.documents.count()
+
+
+class ProjectDocumentSerializer(serializers.ModelSerializer):
+    """Serializer pour le modèle ProjectDocument."""
+
+    project_code = serializers.CharField(source='project.code', read_only=True)
+    project_nom = serializers.CharField(source='project.nom', read_only=True)
+    type_document_code = serializers.CharField(source='type_document.code', read_only=True)
+    type_document_nom = serializers.CharField(source='type_document.nom', read_only=True)
+    uploaded_by_nom = serializers.SerializerMethodField(read_only=True)
+    taille_fichier_formatted = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ProjectDocument
+        fields = [
+            'id', 'project', 'project_code', 'project_nom',
+            'type_document', 'type_document_code', 'type_document_nom',
+            'nom', 'fichier', 'description', 'version',
+            'date_upload', 'uploaded_by', 'uploaded_by_nom',
+            'taille_fichier', 'taille_fichier_formatted',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at', 'date_upload', 'taille_fichier']
+
+    def get_uploaded_by_nom(self, obj):
+        """Retourne le nom de l'utilisateur qui a uploadé le document."""
+        if obj.uploaded_by:
+            return obj.uploaded_by.get_full_name()
+        return None
+
+    def get_taille_fichier_formatted(self, obj):
+        """Retourne la taille du fichier formatée (ex: 2.5 MB)."""
+        if obj.taille_fichier:
+            size = obj.taille_fichier
+            if size < 1024:
+                return f"{size} B"
+            elif size < 1024 * 1024:
+                return f"{size / 1024:.1f} KB"
+            elif size < 1024 * 1024 * 1024:
+                return f"{size / (1024 * 1024):.1f} MB"
+            else:
+                return f"{size / (1024 * 1024 * 1024):.1f} GB"
+        return None
+
+
+class ProjectDocumentListSerializer(serializers.ModelSerializer):
+    """Serializer simplifié pour les listes de documents projet."""
+
+    project_code = serializers.CharField(source='project.code', read_only=True)
+    type_document_nom = serializers.CharField(source='type_document.nom', read_only=True)
+    uploaded_by_nom = serializers.SerializerMethodField(read_only=True)
+    taille_fichier_formatted = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ProjectDocument
+        fields = [
+            'id', 'project', 'project_code',
+            'type_document', 'type_document_nom',
+            'nom', 'fichier', 'version', 'date_upload',
+            'uploaded_by', 'uploaded_by_nom',
+            'taille_fichier_formatted'
+        ]
+
+    def get_uploaded_by_nom(self, obj):
+        """Retourne le nom de l'utilisateur qui a uploadé le document."""
+        if obj.uploaded_by:
+            return obj.uploaded_by.get_full_name()
+        return None
+
+    def get_taille_fichier_formatted(self, obj):
+        """Retourne la taille du fichier formatée (ex: 2.5 MB)."""
+        if obj.taille_fichier:
+            size = obj.taille_fichier
+            if size < 1024:
+                return f"{size} B"
+            elif size < 1024 * 1024:
+                return f"{size / 1024:.1f} KB"
+            elif size < 1024 * 1024 * 1024:
+                return f"{size / (1024 * 1024):.1f} MB"
+            else:
+                return f"{size / (1024 * 1024 * 1024):.1f} GB"
+        return None

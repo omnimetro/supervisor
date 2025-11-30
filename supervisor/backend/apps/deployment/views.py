@@ -16,6 +16,8 @@ Ce fichier contient tous les ViewSets pour l'API REST :
 - CartographyPointViewSet : Points cartographiques
 - DeliveryPhaseViewSet : Phases de livraison
 - CorrectionViewSet : Corrections
+- TypeDocumentViewSet : Types de documents
+- ProjectDocumentViewSet : Documents de projet
 """
 
 from rest_framework import viewsets, permissions, status, filters
@@ -28,7 +30,7 @@ from .models import (
     Operator, BOQCategory, BOQItem, TaskDefinition,
     Subcontractor, Specialite, Technician, Project, ProjectPlanning,
     TaskPlanning, DailyReport, CartographyPoint,
-    DeliveryPhase, Correction
+    DeliveryPhase, Correction, TypeDocument, ProjectDocument
 )
 from .serializers import (
     OperatorSerializer, BOQCategorySerializer,
@@ -39,7 +41,8 @@ from .serializers import (
     ProjectPlanningSerializer, TaskPlanningSerializer,
     DailyReportSerializer, CartographyPointSerializer,
     DeliveryPhaseSerializer, DeliveryPhaseListSerializer,
-    CorrectionSerializer
+    CorrectionSerializer, TypeDocumentSerializer,
+    ProjectDocumentSerializer, ProjectDocumentListSerializer
 )
 
 
@@ -575,3 +578,106 @@ class CorrectionViewSet(viewsets.ModelViewSet):
     ]
     ordering_fields = ['date', 'statut', 'created_at']
     ordering = ['delivery_phase', '-date']
+
+
+# ============================================
+# VIEWSETS GESTION DOCUMENTAIRE
+# ============================================
+
+class TypeDocumentViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour la gestion des types de documents.
+
+    Endpoints:
+    - GET /api/deployment/type-documents/ : Liste des types de documents
+    - POST /api/deployment/type-documents/ : Créer un type de document
+    - GET /api/deployment/type-documents/{id}/ : Détail d'un type de document
+    - PUT /api/deployment/type-documents/{id}/ : Modifier
+    - PATCH /api/deployment/type-documents/{id}/ : Modification partielle
+    - DELETE /api/deployment/type-documents/{id}/ : Supprimer
+    - GET /api/deployment/type-documents/active/ : Types de documents actifs
+    """
+
+    queryset = TypeDocument.objects.all()
+    serializer_class = TypeDocumentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_active', 'code']
+    search_fields = ['code', 'nom', 'description']
+    ordering_fields = ['code', 'nom', 'created_at']
+    ordering = ['code']
+
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        """Retourne uniquement les types de documents actifs."""
+        active_types = self.queryset.filter(is_active=True)
+        serializer = self.get_serializer(active_types, many=True)
+        return Response(serializer.data)
+
+
+class ProjectDocumentViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet pour la gestion des documents de projet.
+
+    Endpoints:
+    - GET /api/deployment/project-documents/ : Liste des documents
+    - POST /api/deployment/project-documents/ : Créer un document
+    - GET /api/deployment/project-documents/{id}/ : Détail d'un document
+    - PUT /api/deployment/project-documents/{id}/ : Modifier
+    - PATCH /api/deployment/project-documents/{id}/ : Modification partielle
+    - DELETE /api/deployment/project-documents/{id}/ : Supprimer
+    - GET /api/deployment/project-documents/by_project/?project_id=X : Documents par projet
+    - GET /api/deployment/project-documents/by_type/?type_id=X : Documents par type
+    """
+
+    queryset = ProjectDocument.objects.select_related(
+        'project', 'type_document', 'uploaded_by'
+    ).all()
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['project', 'type_document', 'uploaded_by', 'version']
+    search_fields = [
+        'nom', 'description', 'version',
+        'project__code', 'project__nom',
+        'type_document__code', 'type_document__nom'
+    ]
+    ordering_fields = ['nom', 'date_upload', 'created_at']
+    ordering = ['-date_upload']
+
+    def get_serializer_class(self):
+        """Utilise un serializer simplifié pour les listes."""
+        if self.action == 'list':
+            return ProjectDocumentListSerializer
+        return ProjectDocumentSerializer
+
+    def perform_create(self, serializer):
+        """Enregistre l'utilisateur qui a uploadé le document."""
+        serializer.save(uploaded_by=self.request.user.profile)
+
+    @action(detail=False, methods=['get'])
+    def by_project(self, request):
+        """Retourne les documents pour un projet donné."""
+        project_id = request.query_params.get('project_id')
+        if not project_id:
+            return Response(
+                {'error': 'Le paramètre "project_id" est requis'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        documents = self.queryset.filter(project_id=project_id)
+        serializer = self.get_serializer(documents, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def by_type(self, request):
+        """Retourne les documents pour un type de document donné."""
+        type_id = request.query_params.get('type_id')
+        if not type_id:
+            return Response(
+                {'error': 'Le paramètre "type_id" est requis'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        documents = self.queryset.filter(type_document_id=type_id)
+        serializer = self.get_serializer(documents, many=True)
+        return Response(serializer.data)

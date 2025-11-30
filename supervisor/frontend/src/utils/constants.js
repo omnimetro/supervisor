@@ -59,7 +59,11 @@ export const API_ENDPOINTS = {
 
     // Livraison et corrections
     DELIVERY_PHASES: '/deployment/delivery-phases/',
-    CORRECTIONS: '/deployment/corrections/'
+    CORRECTIONS: '/deployment/corrections/',
+
+    // Gestion documentaire
+    TYPE_DOCUMENTS: '/deployment/type-documents/',
+    PROJECT_DOCUMENTS: '/deployment/project-documents/'
   },
 
   // Opérations B2B
