@@ -426,10 +426,6 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('budget',),
             'classes': ('collapse',)
         }),
-        ('Documents', {
-            'fields': ('plan_synoptique', 'plan_map', 'bom'),
-            'classes': ('collapse',)
-        }),
         ('Description', {
             'fields': ('description',),
             'classes': ('collapse',)

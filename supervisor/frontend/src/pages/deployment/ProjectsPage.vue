@@ -440,18 +440,6 @@
                   :rules="[val => !!val || 'Le superviseur est requis']"
                 />
 
-                <q-select
-                  v-model="formData.coordonnateur"
-                  outlined
-                  :options="coordinators"
-                  option-value="id"
-                  option-label="full_name"
-                  emit-value
-                  map-options
-                  label="Coordonnateur"
-                  clearable
-                />
-
                 <div class="row q-col-gutter-md">
                   <div class="col-6">
                     <q-input
@@ -501,6 +489,27 @@
                   label="Statut *"
                   :rules="[val => !!val || 'Le statut est requis']"
                 />
+              </div>
+            </div>
+
+            <!-- Section Documents du Projet (visible en édition seulement) -->
+            <div v-if="isEditing && formData.id" class="q-mt-lg">
+              <q-separator class="q-mb-md" />
+              <div class="text-h6 q-mb-md">Documents du Projet</div>
+              <div class="row items-center q-gutter-md">
+                <q-btn
+                  icon="folder_open"
+                  label="Gérer les Documents"
+                  color="accent"
+                  outline
+                  @click="openProjectDocuments"
+                  type="button"
+                >
+                  <q-tooltip>Voir, ajouter, modifier et supprimer les documents de ce projet</q-tooltip>
+                </q-btn>
+                <div class="text-caption text-grey-7">
+                  Cliquez pour gérer les documents (BOM, MAP, SYNOPTIQUE, etc.) liés à ce projet
+                </div>
               </div>
             </div>
           </q-form>
@@ -579,12 +588,12 @@ const coordinators = ref([])
 const loading = ref(false)
 
 const formData = ref({
+  id: null,
   code: '',
   nom: '',
   operator: null,
   type_projet: '',
   zone_deploiement: '',
-  coordonnateur: null,
   superviseur_aiv: null,
   date_debut_prevue: '',
   date_fin_prevue: '',
@@ -827,16 +836,29 @@ function editProject(project) {
   showFormDialog.value = true
 }
 
+/**
+ * Ouvrir la page de gestion des documents du projet
+ */
+function openProjectDocuments() {
+  if (formData.value.id) {
+    // Ouvrir la page de documents avec le filtre sur le projet en cours
+    router.push({
+      name: 'project-documents',
+      query: { project_id: formData.value.id }
+    })
+  }
+}
+
 function resetForm() {
   isEditing.value = false
   selectedProject.value = null
   formData.value = {
+    id: null,
     code: '',
     nom: '',
     operator: null,
     type_projet: '',
     zone_deploiement: '',
-    coordonnateur: null,
     superviseur_aiv: null,
     date_debut_prevue: '',
     date_fin_prevue: '',

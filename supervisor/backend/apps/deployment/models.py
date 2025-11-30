@@ -712,27 +712,6 @@ class Project(models.Model):
         blank=True,
         verbose_name="Description"
     )
-    plan_synoptique = models.FileField(
-        upload_to='projects/plans/',
-        blank=True,
-        null=True,
-        verbose_name="Plan synoptique",
-        help_text="Architecture réseau des équipements télécom"
-    )
-    plan_map = models.FileField(
-        upload_to='projects/maps/',
-        blank=True,
-        null=True,
-        verbose_name="Plan Map",
-        help_text="Chemin des câbles et positions des équipements"
-    )
-    bom = models.FileField(
-        upload_to='projects/bom/',
-        blank=True,
-        null=True,
-        verbose_name="BOM (Bill of Materials)",
-        help_text="Quantitatif des consommables"
-    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Date de création"

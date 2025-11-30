@@ -400,7 +400,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useQuasar, date } from 'quasar'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { apiService } from 'src/services/api'
 
 // ============================================
@@ -409,6 +409,7 @@ import { apiService } from 'src/services/api'
 
 const $q = useQuasar()
 const router = useRouter()
+const route = useRoute()
 
 // ============================================
 // État Réactif
@@ -795,6 +796,11 @@ function formatDate(dateStr) {
 // ============================================
 
 onMounted(() => {
+  // Si un project_id est passé en query param, on initialise le filtre
+  if (route.query.project_id) {
+    filterProject.value = parseInt(route.query.project_id)
+  }
+
   fetchDocuments()
   fetchProjects()
   fetchTypeDocuments()

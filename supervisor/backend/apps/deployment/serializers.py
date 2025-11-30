@@ -269,7 +269,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             'superviseur_aiv', 'superviseur_aiv_nom',
             'superviseur_operateur', 'travaux_ok', 'environnement_ok',
             'vt_ok', 'pv_ok', 'date_livraison', 'description',
-            'plan_synoptique', 'plan_map', 'bom',
             'progression_percentage', 'total_tasks', 'completed_tasks',
             'is_delayed',
             'created_at', 'updated_at'
