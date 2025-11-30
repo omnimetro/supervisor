@@ -1007,7 +1007,7 @@ class ProjectDocumentAdmin(admin.ModelAdmin):
             'fields': ('fichier', 'taille_fichier', 'version')
         }),
         ('Détails', {
-            'fields': ('description', 'uploaded_by')
+            'fields': ('description', 'uploaded_by_profil')
         }),
         ('Métadonnées', {
             'fields': ('date_upload', 'created_at', 'updated_at'),
@@ -1042,7 +1042,7 @@ class ProjectDocumentAdmin(admin.ModelAdmin):
 
     def display_uploaded_by(self, obj):
         """Affiche l'utilisateur qui a uploadé."""
-        if obj.uploaded_by:
-            return obj.uploaded_by.get_full_name()
+        if obj.uploaded_by_profil:
+            return obj.uploaded_by_profil.get_full_name()
         return '-'
     display_uploaded_by.short_description = 'Uploadé par'

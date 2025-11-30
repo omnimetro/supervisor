@@ -333,7 +333,7 @@
             <q-item>
               <q-item-section>
                 <q-item-label caption>Uploadé par</q-item-label>
-                <q-item-label>{{ selectedDocument.uploaded_by_nom || '-' }}</q-item-label>
+                <q-item-label>{{ selectedDocument.uploaded_by_profil_nom || '-' }}</q-item-label>
               </q-item-section>
             </q-item>
 

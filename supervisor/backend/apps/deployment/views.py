@@ -631,11 +631,11 @@ class ProjectDocumentViewSet(viewsets.ModelViewSet):
     """
 
     queryset = ProjectDocument.objects.select_related(
-        'project', 'type_document', 'uploaded_by'
+        'project', 'type_document', 'uploaded_by_profil'
     ).all()
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['project', 'type_document', 'uploaded_by', 'version']
+    filterset_fields = ['project', 'type_document', 'uploaded_by_profil', 'version']
     search_fields = [
         'nom', 'description', 'version',
         'project__code', 'project__nom',
@@ -652,7 +652,7 @@ class ProjectDocumentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """Enregistre l'utilisateur qui a uploadé le document."""
-        serializer.save(uploaded_by=self.request.user.profile)
+        serializer.save(uploaded_by_profil=self.request.user.profile)
 
     @action(detail=False, methods=['get'])
     def by_project(self, request):

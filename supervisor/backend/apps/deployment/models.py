@@ -866,7 +866,7 @@ class ProjectDocument(models.Model):
         auto_now_add=True,
         verbose_name="Date d'upload"
     )
-    uploaded_by = models.ForeignKey(
+    uploaded_by_profil = models.ForeignKey(
         'users.Profile',
         on_delete=models.SET_NULL,
         null=True,

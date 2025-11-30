@@ -582,7 +582,7 @@ class ProjectDocumentSerializer(serializers.ModelSerializer):
     project_nom = serializers.CharField(source='project.nom', read_only=True)
     type_document_code = serializers.CharField(source='type_document.code', read_only=True)
     type_document_nom = serializers.CharField(source='type_document.nom', read_only=True)
-    uploaded_by_nom = serializers.SerializerMethodField(read_only=True)
+    uploaded_by_profil_nom = serializers.SerializerMethodField(read_only=True)
     taille_fichier_formatted = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -591,16 +591,16 @@ class ProjectDocumentSerializer(serializers.ModelSerializer):
             'id', 'project', 'project_code', 'project_nom',
             'type_document', 'type_document_code', 'type_document_nom',
             'nom', 'fichier', 'description', 'version',
-            'date_upload', 'uploaded_by', 'uploaded_by_nom',
+            'date_upload', 'uploaded_by_profil', 'uploaded_by_profil_nom',
             'taille_fichier', 'taille_fichier_formatted',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at', 'date_upload', 'taille_fichier']
 
-    def get_uploaded_by_nom(self, obj):
+    def get_uploaded_by_profil_nom(self, obj):
         """Retourne le nom de l'utilisateur qui a uploadé le document."""
-        if obj.uploaded_by:
-            return obj.uploaded_by.get_full_name()
+        if obj.uploaded_by_profil:
+            return obj.uploaded_by_profil.get_full_name()
         return None
 
     def get_taille_fichier_formatted(self, obj):
@@ -623,7 +623,7 @@ class ProjectDocumentListSerializer(serializers.ModelSerializer):
 
     project_code = serializers.CharField(source='project.code', read_only=True)
     type_document_nom = serializers.CharField(source='type_document.nom', read_only=True)
-    uploaded_by_nom = serializers.SerializerMethodField(read_only=True)
+    uploaded_by_profil_nom = serializers.SerializerMethodField(read_only=True)
     taille_fichier_formatted = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -632,14 +632,14 @@ class ProjectDocumentListSerializer(serializers.ModelSerializer):
             'id', 'project', 'project_code',
             'type_document', 'type_document_nom',
             'nom', 'fichier', 'version', 'date_upload',
-            'uploaded_by', 'uploaded_by_nom',
+            'uploaded_by_profil', 'uploaded_by_profil_nom',
             'taille_fichier_formatted'
         ]
 
-    def get_uploaded_by_nom(self, obj):
+    def get_uploaded_by_profil_nom(self, obj):
         """Retourne le nom de l'utilisateur qui a uploadé le document."""
-        if obj.uploaded_by:
-            return obj.uploaded_by.get_full_name()
+        if obj.uploaded_by_profil:
+            return obj.uploaded_by_profil.get_full_name()
         return None
 
     def get_taille_fichier_formatted(self, obj):
