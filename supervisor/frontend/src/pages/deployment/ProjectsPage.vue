@@ -584,7 +584,6 @@ const filterStatus = ref(null)
 const projects = ref([])
 const operators = ref([])
 const supervisors = ref([])
-const coordinators = ref([])
 const loading = ref(false)
 
 const formData = ref({
